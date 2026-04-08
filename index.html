@@ -721,7 +721,7 @@ async function buildPDF(declNum,prop,empName,date,iban,swift,message,lineData,tG
   for(let i=0;i<receiptItems.length;i++){
     const{line:l,lineIdx,receipt:file,recIdx,total}=receiptItems[i];
     const prog=document.getElementById('progress-msg');
-    if(prog) prog.textContent=`Processing receipt ${i+1} of ${receiptLines.length} — ${file.name}...`;
+    if(prog) prog.textContent=`Processing receipt ${i+1} of ${receiptItems.length} — ${file.name}...`;
 
     newPage();
     doc.setFontSize(8);doc.setFont(FONT,'bold');doc.setTextColor(40,40,40);
