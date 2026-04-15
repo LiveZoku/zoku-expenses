@@ -282,7 +282,7 @@ const COSTS=[
   {label:'Give-aways / external gifts',glNL:'4572',ccNL:'550',glFR:'709704572',ccFR:'4572',dept:'Marketing',vatType:'standard'},
   {label:'Google Ads',glNL:'10069',ccNL:'551',glFR:'10069',ccFR:'10069',dept:'Marketing',vatType:'zero_other'},
   {label:'Decorations',glNL:'4323',ccNL:'SPLIT',glFR:'606304323',ccFR:'SPLIT',dept:'Office & General',vatType:'standard',splitCC:['500','510']},
-  {label:'Other / miscellaneous',glNL:'540',ccNL:'540',glFR:'666004525',ccFR:'540',dept:'General',vatType:'standard'},
+  {label:'Other / miscellaneous',glNL:'',ccNL:'',glFR:'',ccFR:'',dept:'General',vatType:'standard'},
 ];
 
 const ALWAYS_ZERO=['zero_restaurant','zero_intl_travel','zero_other'];
@@ -446,9 +446,7 @@ function getLineCalc(id){
   }
   const net=parseFloat(document.getElementById('l'+id+'-net-input')?.value)||0;
   const vat=parseFloat(document.getElementById('l'+id+'-vat-input')?.value)||0;
-  const vatPct=net>0&&vat>0?(vat/net*100).toFixed(1)+'%':null;
-  const treatmentLabel='VAT from invoice'+(vatPct?` (${vatPct})`:'');
-  return{gross:net+vat,net,vat,vatPct,treatment:treatmentLabel,
+  return{gross:net+vat,net,vat,vatPct:null,treatment:'VAT from invoice',
     gl:getGL(cost,isParis),cc:getCC(cost,isParis),splitCC:cost?.splitCC||null};
 }
 
