@@ -127,39 +127,38 @@ function registerMontserratInDoc(doc) { return false; }
 <body>
 
 <div class="modal-overlay" id="success-modal">
-  <div class="modal-box">
-    
-    <div class="modal-title">Declaration submitted</div>
-    <div class="modal-sub">Your PDF has downloaded. Outlook is opening with a pre-filled email — attach the PDF and click Send to Finance.</div>
-    <div class="modal-ref" id="modal-ref"></div>
-    <button class="modal-btn" onclick="document.getElementById('success-modal').classList.remove('show')">Close</button>
-  </div>
-</div>
+  <div class="modal-box" style="max-width:480px">
 
-<div class="topbar">
-  <img class="logo" src="data:image/webp;base64,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" alt="Zoku">
-  <div class="topbar-right">Expense Declaration</div>
-</div>
+    <div id="modal-step-1">
+      <div style="width:48px;height:48px;background:#1a1a1a;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </div>
+      <div class="modal-title" style="margin-bottom:0.5rem">Step 1 of 2 — PDF downloaded</div>
+      <div class="modal-sub" style="margin-bottom:1rem">Your declaration PDF has saved to your Downloads folder. You will need to attach it to the email in the next step.</div>
+      <div id="modal-filename" style="font-family:monospace;font-size:12px;background:#f5f5f3;padding:8px 12px;border-radius:2px;color:#1a1a1a;margin-bottom:1rem;word-break:break-all;text-align:left"></div>
+      <div class="modal-ref" id="modal-ref" style="margin-bottom:1.25rem"></div>
+      <button class="modal-btn" onclick="proceedToStep2()" style="width:100%">Continue — open email in Outlook &rarr;</button>
+      <div style="font-size:11px;color:#aaa;margin-top:10px;line-height:1.6">Clicking Continue will open a pre-filled email in Outlook. You must attach the PDF before sending.</div>
+    </div>
 
-<div class="progress-bar" id="progress-bar">
-  <div class="prog-step" id="prog-1">
-    <div class="prog-dot"></div>
-    <div class="prog-label">Property</div>
-  </div>
-  <div class="prog-line"></div>
-  <div class="prog-step" id="prog-2">
-    <div class="prog-dot"></div>
-    <div class="prog-label">Your details</div>
-  </div>
-  <div class="prog-line"></div>
-  <div class="prog-step" id="prog-3">
-    <div class="prog-dot"></div>
-    <div class="prog-label">Expenses</div>
-  </div>
-  <div class="prog-line"></div>
-  <div class="prog-step" id="prog-4">
-    <div class="prog-dot"></div>
-    <div class="prog-label">Submit</div>
+    <div id="modal-step-2" style="display:none">
+      <div style="width:48px;height:48px;background:#f5f5f3;border:2px solid #1a1a1a;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <div class="modal-title" style="margin-bottom:0.5rem">Step 2 of 2 — Attach &amp; send</div>
+      <div class="modal-sub" style="margin-bottom:1rem">Outlook should now be open with a pre-filled email to Finance.</div>
+      <div style="background:#fdf6e8;border:1px solid #d4a017;border-radius:2px;padding:12px 14px;margin-bottom:1.25rem;text-align:left">
+        <div style="font-size:12px;font-weight:600;color:#7a4f00;margin-bottom:8px;letter-spacing:0.04em">&#9888; Before you click Send in Outlook:</div>
+        <div style="font-size:12px;color:#7a4f00;line-height:2">
+          1. Click <strong>Attach file</strong> (paperclip icon) in Outlook<br>
+          2. Find and attach: <strong><span id="modal-filename-2" style="font-family:monospace"></span></strong><br>
+          3. Confirm the PDF appears as an attachment, then click <strong>Send</strong>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#aaa;margin-bottom:1.25rem;line-height:1.6;text-align:left">If Outlook did not open, send manually to <strong>finance@livezoku.com</strong> and attach the PDF from your Downloads folder.</div>
+      <button class="modal-btn" onclick="closeSuccessModal()" style="width:100%;background:#f5f5f3;color:#1a1a1a;border:1px solid #e0e0dc">Done — close</button>
+    </div>
+
   </div>
 </div>
 
@@ -788,6 +787,20 @@ async function buildPDF(declNum,prop,empName,date,iban,swift,message,lineData,tG
   return{doc,pdfFilename:declNum+'-declaration.pdf'};
 }
 
+let _lastPdfFilename = '';
+
+async function proceedToStep2(){
+  document.getElementById('modal-step-1').style.display='none';
+  document.getElementById('modal-step-2').style.display='block';
+  window.location.href=_lastMailtoHref;
+}
+
+function closeSuccessModal(){
+  document.getElementById('success-modal').classList.remove('show');
+  document.getElementById('modal-step-1').style.display='block';
+  document.getElementById('modal-step-2').style.display='none';
+}
+
 async function handleSubmit(){
   const prop=getProperty();
   const empName=document.getElementById('emp-name').value.trim();
@@ -824,6 +837,7 @@ async function handleSubmit(){
     const subject=encodeURIComponent('Expense Declaration '+declNum+' — '+empName+' — '+prop.name);
     const body=encodeURIComponent([
       'Dear Finance team,','',
+      '⚠ REMINDER: Please attach the PDF file ('+pdfFilename+') to this email before sending.','',
       message||'Please find my expense declaration attached.','',
       '----------------------------------------',
       'Declaration: '+declNum,'Employee:    '+empName,'Property:    '+prop.name,
@@ -836,8 +850,13 @@ async function handleSubmit(){
       'Kind regards,',empName,
     ].join('\n'));
 
-    window.location.href='mailto:finance@livezoku.com?subject='+subject+'&body='+body;
+    _lastMailtoHref='mailto:finance@livezoku.com?subject='+subject+'&body='+body;
+    _lastPdfFilename=pdfFilename;
     document.getElementById('modal-ref').textContent='Reference: '+declNum;
+    document.getElementById('modal-filename').textContent=pdfFilename;
+    document.getElementById('modal-filename-2').textContent=pdfFilename;
+    document.getElementById('modal-step-1').style.display='block';
+    document.getElementById('modal-step-2').style.display='none';
     document.getElementById('success-modal').classList.add('show');
     btn.textContent='Submitted';
   }catch(e){
