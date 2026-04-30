@@ -599,7 +599,7 @@ async function renderPDFPagesToImages(file){
     canvas.width=viewport.width;canvas.height=viewport.height;
     const ctx=canvas.getContext('2d');
     await page.render({canvasContext:ctx,viewport}).promise;
-    images.push({dataUrl:canvas.toDataURL('image/jpeg',0.65),w:canvas.width,h:canvas.height});
+    images.push({dataUrl:canvas.toDataURL('image/jpeg',0.50),w:canvas.width,h:canvas.height});
   }
   return images;
 }
@@ -609,16 +609,20 @@ function compressImage(dataUrl, maxPx, quality){
     const img=new Image();
     img.onload=function(){
       let w=img.width, h=img.height;
-      if(w>maxPx||h>maxPx){
-        if(w>h){h=Math.round(h*(maxPx/w));w=maxPx;}
-        else{w=Math.round(w*(maxPx/h));h=maxPx;}
-      }
+      // Always scale down to maxPx regardless of original size
+      if(w>h){h=Math.round(h*(maxPx/w));w=maxPx;}
+      else{w=Math.round(w*(maxPx/h));h=maxPx;}
+      // Never upscale
+      if(w>img.width){w=img.width;h=img.height;}
       const cvs=document.createElement('canvas');
       cvs.width=w;cvs.height=h;
-      cvs.getContext('2d').drawImage(img,0,0,w,h);
+      const ctx=cvs.getContext('2d');
+      ctx.fillStyle='#ffffff';
+      ctx.fillRect(0,0,w,h);
+      ctx.drawImage(img,0,0,w,h);
       resolve(cvs.toDataURL('image/jpeg',quality));
     };
-    img.onerror=()=>resolve(dataUrl); // fallback to original if error
+    img.onerror=()=>resolve(dataUrl);
     img.src=dataUrl;
   });
 }
@@ -769,7 +773,7 @@ async function buildPDF(declNum,prop,empName,date,iban,swift,message,lineData,tG
       try{
         const rawDataUrl=await readFileAsDataURL(file);
         // Compress image to max 1500px and 70% quality before embedding
-        const dataUrl=await compressImage(rawDataUrl,1500,0.70);
+        const dataUrl=await compressImage(rawDataUrl,1200,0.50);
         const dims=await getImageDimensions(dataUrl);
         const maxW=usableW,maxH=ph-y-20;
         const pxToMm=0.264583;
