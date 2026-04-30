@@ -599,9 +599,28 @@ async function renderPDFPagesToImages(file){
     canvas.width=viewport.width;canvas.height=viewport.height;
     const ctx=canvas.getContext('2d');
     await page.render({canvasContext:ctx,viewport}).promise;
-    images.push({dataUrl:canvas.toDataURL('image/jpeg',0.92),w:canvas.width,h:canvas.height});
+    images.push({dataUrl:canvas.toDataURL('image/jpeg',0.65),w:canvas.width,h:canvas.height});
   }
   return images;
+}
+
+function compressImage(dataUrl, maxPx, quality){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=function(){
+      let w=img.width, h=img.height;
+      if(w>maxPx||h>maxPx){
+        if(w>h){h=Math.round(h*(maxPx/w));w=maxPx;}
+        else{w=Math.round(w*(maxPx/h));h=maxPx;}
+      }
+      const cvs=document.createElement('canvas');
+      cvs.width=w;cvs.height=h;
+      cvs.getContext('2d').drawImage(img,0,0,w,h);
+      resolve(cvs.toDataURL('image/jpeg',quality));
+    };
+    img.onerror=()=>resolve(dataUrl); // fallback to original if error
+    img.src=dataUrl;
+  });
 }
 
 async function buildPDF(declNum,prop,empName,date,iban,swift,message,lineData,tG,tN,tV){
@@ -748,18 +767,17 @@ async function buildPDF(declNum,prop,empName,date,iban,swift,message,lineData,tG
       }
     } else {
       try{
-        const dataUrl=await readFileAsDataURL(file);
+        const rawDataUrl=await readFileAsDataURL(file);
+        // Compress image to max 1500px and 70% quality before embedding
+        const dataUrl=await compressImage(rawDataUrl,1500,0.70);
         const dims=await getImageDimensions(dataUrl);
         const maxW=usableW,maxH=ph-y-20;
-        // Convert image px to mm at 96dpi, then scale to fill available width
         const pxToMm=0.264583;
         const naturalW=dims.w*pxToMm, naturalH=dims.h*pxToMm;
-        // Always fill full usable width, cap height to page
         const scaleByW=maxW/naturalW;
         const scaledH=naturalH*scaleByW;
         const iw=maxW, ih=Math.min(scaledH,maxH);
-        const fmt=file.type.includes('png')?'PNG':'JPEG';
-        doc.addImage(dataUrl,fmt,ml,y,iw,ih);
+        doc.addImage(dataUrl,'JPEG',ml,y,iw,ih);
       }catch(e){
         doc.setFontSize(9);doc.setTextColor(160,80,80);
         doc.text('Could not embed image: '+file.name,ml,y);
