@@ -593,13 +593,23 @@ async function renderPDFPagesToImages(file){
   const images=[];
   for(let pageNum=1;pageNum<=pdfDoc.numPages;pageNum++){
     const page=await pdfDoc.getPage(pageNum);
-    const scale=2.0;
+    const scale=1.2;
     const viewport=page.getViewport({scale});
     const canvas=document.createElement('canvas');
     canvas.width=viewport.width;canvas.height=viewport.height;
     const ctx=canvas.getContext('2d');
     await page.render({canvasContext:ctx,viewport}).promise;
-    images.push({dataUrl:canvas.toDataURL('image/jpeg',0.50),w:canvas.width,h:canvas.height});
+    // Iterative compression for PDF pages too
+      let pdfDataUrl=canvas.toDataURL('image/jpeg',0.50);
+      let pdfBytes=(pdfDataUrl.length-'data:image/jpeg;base64,'.length)*0.75;
+      let pdfQ=0.50;
+      while(pdfBytes>300*1024&&pdfQ>0.15){
+        pdfQ=Math.max(pdfQ-0.10,0.15);
+        pdfDataUrl=canvas.toDataURL('image/jpeg',pdfQ);
+        pdfBytes=(pdfDataUrl.length-'data:image/jpeg;base64,'.length)*0.75;
+      }
+      console.log('PDF page: '+canvas.width+'x'+canvas.height+'px, '+Math.round(pdfBytes/1024)+'KB');
+      images.push({dataUrl:pdfDataUrl,w:canvas.width,h:canvas.height});
   }
   return images;
 }
@@ -607,10 +617,10 @@ async function renderPDFPagesToImages(file){
 function compressImage(dataUrl, maxPx, quality){
   return new Promise(resolve=>{
     const img=new Image();
-    img.onload=function(){
+    img.onload=async function(){
       let w=img.width, h=img.height;
-      // Always scale down to maxPx regardless of original size
-      if(w>h){h=Math.round(h*(maxPx/w));w=maxPx;}
+      // Scale down to maxPx
+      if(w>=h){h=Math.round(h*(maxPx/w));w=maxPx;}
       else{w=Math.round(w*(maxPx/h));h=maxPx;}
       // Never upscale
       if(w>img.width){w=img.width;h=img.height;}
@@ -620,7 +630,19 @@ function compressImage(dataUrl, maxPx, quality){
       ctx.fillStyle='#ffffff';
       ctx.fillRect(0,0,w,h);
       ctx.drawImage(img,0,0,w,h);
-      resolve(cvs.toDataURL('image/jpeg',quality));
+      let result=cvs.toDataURL('image/jpeg',quality);
+      // ── Iterative compression: if still >300KB, reduce quality further
+      const maxBytes=300*1024; // 300KB target
+      let base64Bytes=(result.length-'data:image/jpeg;base64,'.length)*0.75;
+      let q=quality;
+      while(base64Bytes>maxBytes&&q>0.15){
+        q=Math.max(q-0.10,0.15);
+        result=cvs.toDataURL('image/jpeg',q);
+        base64Bytes=(result.length-'data:image/jpeg;base64,'.length)*0.75;
+        console.log('Re-compressed at q='+q.toFixed(2)+', size='+Math.round(base64Bytes/1024)+'KB');
+      }
+      console.log('Final image: '+w+'x'+h+'px, '+Math.round(base64Bytes/1024)+'KB, q='+q.toFixed(2));
+      resolve(result);
     };
     img.onerror=()=>resolve(dataUrl);
     img.src=dataUrl;
